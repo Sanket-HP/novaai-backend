@@ -1,14 +1,15 @@
 import os
 import uuid
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from azure.cosmos import CosmosClient
 
-# Handlers
+# Custom Handlers
 from api.openai_handler import get_openai_response
 from api.cosmos_handler import insert_user_data, get_all_users
 from api.storage_handler import upload_file
-from api.project_generator import generate_project_from_prompt  # If added
+from api.project_generator import generate_project_from_prompt  # Make sure this file exists
 
 # CosmosDB setup
 cosmos_uri = os.getenv("COSMOS_DB_URI")
@@ -21,6 +22,15 @@ app = FastAPI(
     title="Nova AI Backend",
     description="API for Nova AI - Chat, User Data Store, File Upload, and Project Generator",
     version="1.1.0"
+)
+
+# === Enable CORS ===
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or restrict to frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ==== Request Models ====
@@ -39,41 +49,36 @@ class UploadRequest(BaseModel):
 class ProjectRequest(BaseModel):
     prompt: str
 
-# ==== Health Check ====
+# ==== Endpoints ====
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
-# ==== Root Endpoint ====
 @app.get("/")
 def root():
     return {"message": "Welcome to Nova AI backend!"}
 
-# ==== Chat Endpoint ====
 @app.post("/chat")
 def chat(req: ChatRequest):
     response = get_openai_response(req.prompt)
     return {"response": response}
 
-# ==== Store User Endpoint ====
 @app.post("/store")
 def store(req: StoreRequest):
     result = insert_user_data(req.dict())
     return {"status": "success", "result": result}
 
-# ==== Upload File Endpoint ====
 @app.post("/upload")
 def upload(req: UploadRequest):
     result = upload_file(req.filename, req.content)
     return {"status": "success", "result": result}
 
-# ==== Get All Users Endpoint ====
 @app.get("/users")
 def get_users():
     result = get_all_users()
     return {"status": "success", "result": result}
 
-# ==== (Optional) Generate Project from AI ====
 @app.post("/generate-project")
 def generate_project(req: ProjectRequest):
     result = generate_project_from_prompt(req.prompt)
