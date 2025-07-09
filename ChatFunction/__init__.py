@@ -1,5 +1,6 @@
 import azure.functions as func
 import json
+
 from ..api.openai_handler import get_openai_response
 from ..api.cosmos_handler import insert_user_data
 from ..api.storage_handler import upload_file
@@ -25,6 +26,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             result = upload_file(file_name, content)
             return func.HttpResponse(json.dumps(result), mimetype="application/json")
 
+        # Default case: invalid action
         return func.HttpResponse("Invalid action", status_code=400)
 
     except Exception as e:
