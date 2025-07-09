@@ -13,7 +13,7 @@ cosmos_key = os.getenv("COSMOS_DB_KEY")
 client = CosmosClient(cosmos_uri, credential=cosmos_key)
 
 # Define constants
-DB_NAME = "novaai-cosmosdb"
+DB_NAME = "nova-db"
 CONTAINER_NAME = "users"
 PARTITION_KEY_PATH = "/name"  # Must exist in your user data
 
