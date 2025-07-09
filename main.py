@@ -10,6 +10,7 @@ from api.openai_handler import get_openai_response
 from api.cosmos_handler import insert_user_data, get_all_users
 from api.storage_handler import upload_file
 from api.project_generator import generate_project_from_prompt  # Make sure this file exists
+from api.ai_code_handler import generate_code_from_prompt
 
 # CosmosDB setup
 cosmos_uri = os.getenv("COSMOS_DB_URI")
@@ -83,3 +84,8 @@ def get_users():
 def generate_project(req: ProjectRequest):
     result = generate_project_from_prompt(req.prompt)
     return {"status": "success", "result": result}
+
+@app.post("/ai-code")
+def ai_code(req: ChatRequest):
+    result = generate_code_from_prompt(req.prompt)
+    return result
