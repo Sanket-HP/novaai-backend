@@ -1,8 +1,8 @@
 import azure.functions as func
 import json
-from ..openai_handler import get_openai_response
-from ..cosmos_handler import insert_user_data
-from ..storage_handler import upload_file
+from ..api.openai_handler import get_openai_response
+from ..api.cosmos_handler import insert_user_data
+from ..api.storage_handler import upload_file
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
@@ -25,7 +25,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             result = upload_file(file_name, content)
             return func.HttpResponse(json.dumps(result), mimetype="application/json")
 
-        return func.HttpResponse("Invalid action.", status_code=400)
+        return func.HttpResponse("Invalid action", status_code=400)
 
     except Exception as e:
         return func.HttpResponse(f"Error: {str(e)}", status_code=500)
