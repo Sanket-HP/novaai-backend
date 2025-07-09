@@ -1,17 +1,19 @@
 {
   "bindings": [
     {
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "methods": [ "post" ],
-      "route": "nova"
+      "methods": ["get"],
+      "route": "{*route}"
     },
     {
       "type": "http",
       "direction": "out",
       "name": "$return"
     }
-  ]
+  ],
+  "scriptFile": "main.py",
+  "entryPoint": "main"
 }
