@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 from api.openai_handler import get_openai_response
-from api.cosmos_handler import insert_user_data
+from api.cosmos_handler import insert_user_data, get_all_users
 from api.storage_handler import upload_file
 
 app = FastAPI(
@@ -51,3 +51,9 @@ def store(req: StoreRequest):
 def upload(req: UploadRequest):
     result = upload_file(req.filename, req.content)
     return {"status": "success", "result": result}
+
+# Get all users
+@app.get("/users")
+def get_users():
+    result = get_all_users()
+    return result
