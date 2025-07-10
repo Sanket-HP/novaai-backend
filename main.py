@@ -16,6 +16,8 @@ async def health_check():
 
 @app.post("/generate/")
 async def generate(prompt: str = Form(...)):
+    print("📥 Received prompt:", prompt)
+
     success = generate_code_files(prompt)
     if not success:
         return JSONResponse({"error": "Code generation failed"}, status_code=500)
@@ -28,4 +30,7 @@ async def generate(prompt: str = Form(...)):
 
 @app.get("/download")
 async def download_zip():
+    if not os.path.exists("generated_project.zip"):
+        return JSONResponse({"error": "No zip file found. Please generate a project first."}, status_code=404)
+    
     return FileResponse("generated_project.zip", filename="generated_project.zip", media_type="application/zip")

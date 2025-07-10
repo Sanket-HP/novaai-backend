@@ -11,3 +11,5 @@ def zip_generated_project():
                 full_path = os.path.join(foldername, filename)
                 relative_path = os.path.relpath(full_path, root_dir)
                 zipf.write(full_path, arcname=relative_path)
+
+    print("📦 Project zipped at:", zip_filename)
