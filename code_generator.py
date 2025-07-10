@@ -1,9 +1,7 @@
 import os
 import re
 from openai import AzureOpenAI
-from openai.types.chat import ChatCompletionMessageParam
 
-# Initialize client
 client = AzureOpenAI(
     api_key=os.environ["AZURE_OPENAI_KEY"],
     api_version=os.environ["AZURE_OPENAI_API_VERSION"],
@@ -17,18 +15,13 @@ def generate_code_files(prompt):
         response = client.chat.completions.create(
             model=deployment_name,
             messages=[
-                ChatCompletionMessageParam(role="system", content=(
-                    "You are a full-stack AI developer. From the user prompt, generate:\n"
-                    "- HTML code\n- CSS code\n- JavaScript code\n- Python backend (Flask)\n- Additional route logic if needed."
-                )),
-                ChatCompletionMessageParam(role="user", content=prompt)
-            ],
-            temperature=0.7
+                {"role": "system", "content": "You are a full-stack AI developer. From the user prompt, generate:\n- HTML code\n- CSS code\n- JavaScript code\n- Python backend (Flask)\n- Additional route logic if needed."},
+                {"role": "user", "content": prompt}
+            ]
         )
 
         content = response.choices[0].message.content
 
-        # Extract code
         frontend_html = extract_code(content, "html")
         frontend_css = extract_code(content, "css")
         frontend_js = extract_code(content, "javascript")
@@ -53,7 +46,6 @@ def generate_code_files(prompt):
         with open("generated_projects/latest_project/backend/routes.py", "w") as f:
             f.write(backend_routes or "# No route logic")
 
-        print("✅ Project generated successfully!")
         return True
 
     except Exception as e:
@@ -61,7 +53,6 @@ def generate_code_files(prompt):
         print("❌ GPT-4 Error:", e)
         traceback.print_exc()
         return False
-
 
 def extract_code(text, keyword, match_first=False, fallback=False):
     if not text:
