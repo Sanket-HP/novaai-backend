@@ -6,3 +6,5 @@ python-dotenv
 uvicorn[standard]
 fastapi
 openai
+python-multipart
+aiofiles
